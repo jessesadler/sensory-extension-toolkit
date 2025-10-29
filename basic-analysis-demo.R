@@ -40,6 +40,7 @@ do.call(gridExtra::grid.arrange, args = c(prior_plots$prior_plot, nrow = 2))
 
 N <- 20 # for the purpose of the demo
 X <- 15 # for the purpose of the demo
+confidence <- 0.9
 
 
 # Update priors -----------------------------------------------------------
@@ -54,17 +55,49 @@ prior_plots[1, ]
 
 plot_beta_binomial(alpha = 6, beta = 3, y = X, n = N)
 summarize_beta_binomial(alpha = 6, beta = 3, y = X, n = N)
-plot_beta_ci(alpha = 6 + X, beta = 6 + N - X, ci_level = 0.9) + 
-  annotate(geom = "segment", xmin = )
+plot_beta_ci(alpha = 6 + X, beta = 6 + N - X, ci_level = confidence) 
 
 # I can write some functions to get the actual CI level boundaries (quantiles)
 lims <- qbeta(p = c(0.05, 0.95), shape1 = 6 + X, shape2 = 6 + N - X)
-plot_beta_ci(alpha = 6 + X, beta = 6 + N - X, ci_level = 0.9) + 
+plot_beta_ci(alpha = 6 + X, beta = 6 + N - X, ci_level = confidence) + 
   annotate(geom = "segment", x = lims[1], xend = lims[2], y = 0.5, yend = 0.5, color = "red")
 
 
 
+# Reporting output --------------------------------------------------------
 
+# Some example text
+
+str_glue("Based on your prior certainty about how different your samples were, ", 
+         "and the fact that {X}/{N} of your tasters correctly completed the ",
+         "discrimination test, we estimate that in approximately ", 
+         "{round(confidence * 100, 0)}% of cases, a minimum of ", 
+         "{round(100*lims[1], 0)}% and a maximum of {round(100*lims[2], 0)}% ",
+         "of consumers would notice the difference between these two sample wines.")
+
+# An example plot
+
+tibble(difference = c("noticed", "didn't notice"), 
+       observed = c(X, N - X),
+       `of 100 consumers,\nminimum noticing a difference` = round(c(lims[1], 1-lims[1]) * 100, 0),
+       `of 100 consumers,\nmaximum noticing a difference` = round(c(lims[2], 1-lims[2]) * 100, 0)) |>
+  pivot_longer(-difference) |>
+  mutate(name = fct(name) |> fct_relevel("observed")) |>
+  
+  # and plot
+  
+  ggplot(aes(x = name, y = value, fill = difference)) + 
+  geom_col(position = "dodge") + 
+  facet_wrap(~name, scales = "free_x") + 
+  
+  # clean it up
+  
+  scale_fill_manual(values = c("darkgreen", "goldenrod")) + 
+  labs(fill = NULL, x = NULL, y = "tasters",
+       title = str_glue("Tetrad test results for {N} tasters"),
+       subtitle = str_glue("with {X} correct responses and {round(100 * confidence, 0)}% confidence")) + 
+  theme_linedraw() +
+  theme(legend.position = "bottom")
 
 
 
