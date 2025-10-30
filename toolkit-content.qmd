@@ -1,0 +1,50 @@
+---
+title: "Sensory toolkit content"
+format: html
+---
+
+This is a place to write out the content that may appear within the final presentation of the materials.
+
+## Goals
+1. Determine if a perceptible result (or does not result) when a change is made to the product (e.g. ingredient, packaging, processing, and storage)
+2. You want to identify if your new way of processing/formulation/storage  changes the sensory characteristics of your product.
+
+## How to conduct a tetrad test?
+1. A tetrad test is performed by grouping samples based on similarity.
+2. Panelist criteria:
+    1. Must understand and be able to perform the mechanics of the test
+    2. Avoid replicate evaluation - 
+    3. It is recommended to include panelists who are familiar with the product
+3. Samples setup
+    1. Each product will be assigned 2 sets of 3-digit blinding codes - random code assignment.
+    2. Each panelist will receive a different sample order presentation (1 of 6 possibilities) - randomize order of presentation.
+4. Step-by-step instructions to run a tetrad test
+    1. Recruit your panelists
+    2. Each panelist gets 4 samples (2 samples from each product)
+    3. Each panelist will taste the samples in different orders (everyone will be assigned one out of 6 different orders)
+
+### Resources:
+- [Tetrad instructions](https://compass.astm.org/document/?contentCode=ASTM%7CE3009-15E01%7Cen-US&proxycl=https%3A%2F%2Fsecure.astm.org&fromLogin=true)
+- [Tetrad basics SSP](https://www.sensorysociety.org/meetings/2012%20Abstracts/SSP2012_Ennis_et_al_Tetrad_Workshop_2a.pdf)
+
+## Analysis tool page content
+
+### 1. Inputs
+- Number of panelists
+- Number of correct answers
+- Product 1 name
+- Product 2 name
+- A question for user: "On a scale of 1(not certain at all) to 7 (very certain), how certain are you that your products are (will be perceived as) different? - determining prior
+- Define success for this test
+
+### 2. Analytical  method
+- Bayesian, see [Alicia A. Johnson, Miles Q. Ott, Mine Dogucu, Bayes Rules! book 3.6.1](https://www.bayesrulesbook.com/chapter-3#milgram-3)
+- Show (in %) how many people will tell the difference between the 2 products
+
+## Output: Visuals
+
+*What visuals*
+
+## Output: Report
+
+*What is in the report*
