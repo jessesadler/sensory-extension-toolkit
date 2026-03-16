@@ -28,7 +28,7 @@ In general, a discrimination test requires the following:
 
 # The "tetrad" test: Our recommended discrimination test
 
-There are many test procedures that follow the basic steps above, but rather than debate specific use cases or advantages, we are going to simply recommend that wineries and cideries use the **tetrad test** procedure.  [For reasons that are beyond the scope of this toolkit](https://www.sensorysociety.org/meetings/2016%20Presentations/W_SM_Kamerud.pdf), the tetrad test is more powerful than comparable tests, and has the advantage of being able to set up and present to panelists.
+There are many test procedures that follow the basic steps above, but rather than debate specific use cases or advantages, we are going to simply recommend that wineries and cideries use the **tetrad test** procedure.  [For reasons that are beyond the scope of this toolkit](https://www.sensorysociety.org/meetings/2016%20Presentations/W_SM_Kamerud.pdf), the tetrad test is more powerful than comparable tests, and has the advantage of being easy to set up and to present to panelists.  We think this makes it ideal for use in a winery or cidery environment
 
 ![A placeholder example of a ballot for a tetrad test.](img/tetrad-ballot-PLACEHOLDER.jpg)
 
@@ -55,10 +55,10 @@ The test is called the "tetrad" test specifically because it involves presenting
     3.  The total number of subjects who participated.
     4.  Your prior hypothesis, which you recorded before you started.
     
-A few other notes on the procedure:
+### A few other notes on the procedure:
 
-*  Do not ask questions about preference, acceptance, or degree of difference after the initial sample grouping.
-*  Each scoresheet should be only for evaluating one group of samples (testing 2 products only).
+*  **Do not ask questions about preference/liking/how different the samples are** after the initial sample grouping.  These are different cognitive tasks than simply evaluating "is there a difference" and can bias the results.
+*  **Each scoresheet should be only for evaluating one group of samples** (testing 2 products only).  If you want to compare multiple sets of products, you need to use multiple sheets (and, in reality, set up multiple tests.)
 
 If you want to know more about the tetrad test, we recommend the following [technical presentation on tetrad testing](https://www.sensorysociety.org/meetings/2012%20Abstracts/SSP2012_Ennis_et_al_Tetrad_Workshop_2a.pdf).
 
