@@ -1,0 +1,21 @@
+# Data analysis for tetrad discrimination tests
+
+To use this part of the toolkit, you will need the results of your tetrad test.  Specifically, you will need:
+
+*  Your prior intuition for how easy it would be for panelists to tell the difference between the samples.  You wrote this down, right?
+*  The number of subjects who participated, which we can call $N$.  
+*  The number of subjects *who got the right answer*, which we can call $x$.  By necessity, $x≤N$. 
+
+Once you've got those, we're ready to get analyzing!
+
+## What you'll get from this data analysis
+
+Before we get to the analysis, a quick, intuitive explanation.  Above, we talked about two important numbers: $x$ and $N$.  In fact, the proportion of correct answers, $x/N$ is the key quantity we're interested in here.  Specifically, we're interested in what insight $x/N$ gives us into the plausible proportion of people noticing a difference in your two products, A and B, which we'll call $\pi$ ($\pi=p=$ proportion).  Because $\pi$ is a proportion $0≤\pi≤1$, but we will present results in terms of both $\pi$ and in terms of the number of people in 100 who would notice a difference.
+
+Intuitively, if $\pi$ is closer to $1$, then most people will notice a difference.  If $\pi$ is closer to $0$, then very few people will.  Behind the scenes, we're using $x/N$, combined with your prior estimate of how likely you think there is to be a *sensory* difference between A and B, to calculate a plausible range of $\pi$ values that could lead to that $x/N$.
+
+By giving some worst- and best-case outcomes, we'll tell you what you should expect to see, based on your prior intuition and your actual data, if you brought your products to market.
+
+## Data analysis for tetrad tests
+
+Great!  With that understanding, we can analyze your data. 
