@@ -1,17 +1,18 @@
-# Shiny app with bslib
+## Shiny app with bslib to do the layout ##
+# Use of includeMarkdown function to add markdown text
 
 library(shiny)
-library(tidyverse)
-library(bayesrules)
 library(bslib)
+library(bayesrules)
+
 
 sidebar_selectors <- sidebar(
   numericInput("N", 
                label = "Number of participants",
-               value = 0, min = 0),
+               value = 25, min = 0),
   numericInput("X",
                label = "Number of participants who thought they were different",
-               value = 0, min = 0),
+               value = 15, min = 0),
   selectInput("prior", "Your expectation:",
               choices = prior_tbl$certainty,
               width = "100%"),
@@ -31,6 +32,7 @@ sidebar_distribution <- layout_sidebar(
 
 # Define UI for application that draws a histogram
 ui <- page_navbar(
+  
   title = "Sensory toolkit",
   
   nav_panel("So you want to run a sensory test",
@@ -38,7 +40,7 @@ ui <- page_navbar(
   nav_panel("Recommended test procedure",
             includeMarkdown("tetrad.md")),
   nav_panel("Data analysis",
-            includeMarkdown("analysis.md")),
+            withMathJax(includeMarkdown("analysis.md"))),
   nav_panel("Let's try it out",
             navset_card_tab(
              nav_panel("Plot",
@@ -63,11 +65,14 @@ server <- function(input, output) {
   
 
   output$bayesPlot <- renderPlot({
-    bayesrules::plot_beta_binomial(alpha = priors()[[1]], beta = priors()[[2]], y = input$X, n = input$N)
+    bayesrules::plot_beta_binomial(alpha = priors()[[1]],
+                                   beta = priors()[[2]],
+                                   y = input$X, n = input$N) + 
+      theme_linedraw()
   })
   
-  N <- eventReactive(input$simulate, input$N)
-  X <- eventReactive(input$simulate, input$X)
+  N <- eventReactive(input$simulate, input$N, ignoreNULL = FALSE)
+  X <- eventReactive(input$simulate, input$X, ignoreNULL = FALSE)
   
   
   output$reportText <- renderText(

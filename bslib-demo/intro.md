@@ -2,7 +2,7 @@
 
 What is "sensory testing" (also called "sensory evaluation")? This means getting people’s reaction to a food product in terms of how it tastes, smells, looks, feels, and/or sounds, and then using this information to make data-informed decisions. We want to help provide wine- and cider-makers in Virginia, like you, with **this free toolkit**--a step-by-step guide to teach you how to use it. 
 
-![Two participants taste wine in a sensory test](img/sensory-evaluation.jpeg)
+![Two participants taste wine in a sensory test](img/sensory-evaluation.jpeg){width=50%}
 
 In this interactive toolkit, we explain how to design, run, analyze, and use the results from a specific type of sensory test: **"discrimination testing"**, which allows you to determine whether processing or ingredient changes will lead to noticeable changes in your product.  
 
@@ -20,7 +20,7 @@ As someone who works in the wine or cider industry, it's likely that you frequen
 
 Typically, there are **three basic questions/goals** of sensory tests:
 
-1.  Discrimination :arrow_left: *what this toolkit will cover*
+1.  Discrimination ⬅️ *what this toolkit will cover*
 
     In **discrimination testing**, we test whether processing or ingredient differences lead to a noticeable difference.
 

@@ -6,7 +6,7 @@ So far, we've talked about what you can do with a general discrimination test.  
 
 Notice that we write "**panelists**" above: a key principle of sensory testing is that no one person, no matter how well-trained or expert, is accurate all the time or for every product.  Therefore, we use a group of subjects to conduct a sensory test, and we use statistics to determine the strength of the results we observed--to update our understanding of the differences (or not!) between the products.  This helps avoid drawing wrong conclusions just because someone had an off day or got very lucky.
 
-![Presentation of samples for a water-quality *triangle* test.  This picture presents a key cautionary example: don't give your panelists extra clues about the different sample: here "183" is obviously different[^1].](img/triangle-test-example.jpg)
+![Presentation of samples for a water-quality *triangle* test.  This picture presents a key cautionary example: don't give your panelists extra clues about the different sample: here "183" is obviously different[^1].](img/triangle-test-example.jpg){width=50%}
 
 ## General procedure for conducting a discrimination test
 
@@ -23,7 +23,7 @@ In general, a discrimination test requires the following:
 
 There are many test procedures that follow the basic steps above, but rather than debate specific use cases or advantages, we are going to simply recommend that wineries and cideries use the **tetrad test** procedure.  [For reasons that are beyond the scope of this toolkit](https://www.sensorysociety.org/meetings/2016%20Presentations/W_SM_Kamerud.pdf), the tetrad test is more powerful than comparable tests, and has the advantage of being easy to set up and to present to panelists.  We think this makes it ideal for use in a winery or cidery environment
 
-![A placeholder example of a ballot for a tetrad test.](img/tetrad-ballot-PLACEHOLDER.jpg)
+![A placeholder example of a ballot for a tetrad test.](img/tetrad-ballot-PLACEHOLDER.jpg){width=50%}
 
 The test is called the "tetrad" test specifically because it involves presenting each panelist with *four*, anonymized samples: two of sample A and two of sample B.  The panelist must then correctly group the two A and two B samples together.  
 
