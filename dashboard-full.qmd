@@ -1,0 +1,293 @@
+---
+title: "Sensory evaluation toolkit"
+format:
+  dashboard:
+    expandable: false
+    scrolling: true
+server: shiny
+---
+
+```{r}
+#| context: setup
+#| include: false
+
+library(tidyverse)
+library(bayesrules)
+library(bslib)
+
+prior_tbl <- 
+  tibble(certainty = c("Sure they're different",
+                       "Not sure they're different",
+                       "I really have no idea, but I hope they're different",
+                       "I really have no idea, but I hope they're the same",
+                       "Not sure they're the same",
+                       "Sure they're the same"),
+         proportion = c(1/3, 1/3, 1/3, 2/3, 2/3, 2/3),
+         b_ratio = c(1/2, 1/2, 1/2, 2, 2, 2),
+         a = c(6, 4, 2, 1, 2, 3),
+         b = b_ratio * a)
+
+prior_ab <- function(prior_tbl, level) {
+  certainty_choice <- prior_tbl |> 
+    dplyr::filter(certainty == level)
+  out <- c(certainty_choice$a, certainty_choice$b)
+  out
+}
+
+lims_fun <- function(N, X) {
+  qbeta(p = c(0.05, 0.95), shape1 = 6 + X, shape2 = 6 + N - X)
+}
+
+report_txt <- function(N, X, confidence = 0.9) {
+  lims <- lims_fun(N, X)
+  str_glue(
+    "Based on your prior certainty about how different your samples were, ", 
+    "and the fact that {X}/{N} of your tasters correctly completed the ",
+    "discrimination test, we estimate that in approximately ", 
+    "{round(confidence * 100, 0)}% of cases, a minimum of ", 
+    "{round(100*lims[1], 0)}% and a maximum of {round(100*lims[2], 0)}% ",
+    "of consumers would notice the difference between these two sample wines."
+  )
+}
+
+report_plt <- function(N, X, confidence = 0.9) {
+  lims <- lims_fun(N, X)
+  
+  tibble(difference = c("noticed", "didn't notice"), 
+         observed = c(X, N - X),
+         `of 100 consumers,\nminimum noticing a difference` = round(c(lims[1], 1-lims[1]) * 100, 0),
+         `of 100 consumers,\nmaximum noticing a difference` = round(c(lims[2], 1-lims[2]) * 100, 0)) |>
+    pivot_longer(-difference) |>
+    mutate(name = fct(name) |> fct_relevel("observed")) |>
+    
+    # and plot
+    
+    ggplot(aes(x = name, y = value, fill = difference)) + 
+    geom_col(position = "dodge") + 
+    facet_wrap(~name, scales = "free_x") + 
+    
+    # clean it up
+    
+    scale_fill_manual(values = c("darkgreen", "goldenrod")) + 
+    labs(fill = NULL, x = NULL, y = "tasters",
+         title = str_glue("Tetrad test results for {N} tasters"),
+         subtitle = str_glue("with {X} correct responses and {round(100 * confidence, 0)}% confidence")) + 
+    theme_linedraw() +
+    theme(legend.position = "bottom") 
+}
+```
+
+# Introduction
+
+::: {.card title="So you want to run a sensory test" width="65%"}
+
+What is "sensory testing" (also called "sensory evaluation")? This means getting people’s reaction to a food product in terms of how it tastes, smells, looks, feels, and/or sounds, and then using this information to make data-informed decisions. We want to help provide wine- and cider-makers in Virginia, like you, with **this free toolkit**--a step-by-step guide to teach you how to use it.
+
+In this interactive toolkit, we explain how to design, run, analyze, and use the results from a specific type of sensory test: **"discrimination testing"**, which allows you to determine whether processing or ingredient changes will lead to noticeable changes in your product.  
+
+You'll notice 3 of tabs in this toolkit--if you follow through each of them, you'll learn how to design a test, how to collect data, and how to analyze the data using this toolkit.  If you're already familiar with these kinds of tests, and you just want to analyze data you've already collected, you can skip right to the "discrimination test analysis" tab above or by clicking [here](#lets-try-it-out).
+
+This toolkit was designed and supported through funding from the Virginia Tech College of Agricultural and Life Sciences 2024 Seed Grant Program *“Determining and meeting the sensory evaluation needs of VA wine and cider makers”*.  In a survey conducted of Virginia wine- and cider-makers in late 2025/early 2026 (IRB 25-788), as part of this funding, respondents indicated that discrimination testing was one of their top needs, and this toolkit is meant to address those needs.
+
+![Two participants taste wine in a sensory test](images/sensory-evaluation.jpeg){width=300}
+
+## Why conduct a sensory test at all?
+
+As someone who works in the wine or cider industry, it's likely that you frequently change raw materials--source apples or grapes from different plots--or processing equipment--perhaps changing your pressing equipment, or scaling up to larger fermenter batches.  These are all real differences--something is different.  But the question is whether these changes lead to **noticeable sensory differences** in the product.
+
+(Oh, you might say, we know there *is* a difference in ºBrix or volatile acidity... but depending on the product, measurable chemical or physical differences don't always result in sensory differences that consumers notice.  We use sensory evaluation to bring in "human instruments" to determine whether known differences in some process, ingredient, or parameter lead to these noticeable sensory differences.)
+
+## The categories of sensory evalaluation
+
+Typically, there are **three basic questions/goals** of sensory tests:
+
+1.  Discrimination ⬅️ *what this toolkit will cover*
+
+    In **discrimination testing**, we test whether processing or ingredient differences lead to a noticeable difference.
+
+2.  Descriptive
+
+    In **descriptive testing** (often called Descriptive Analysis), we quantify the differences among products that we know are different.
+    
+3.  Affective
+
+    In **affective testing**, we test larger groups of consumers to see how they respond--positively, negatively?--to products we know are different.
+    
+## Production goals
+
+The categories above are very basic types of research questions: is there a difference? What kind? How do people feel about it?
+
+In the real world, these research questions are applied more specifically.  For example, we might want to determine whether people notice a change in grape blends (is a change from 45/55 to 50/50 Merlot/Cabernet Sauvignon noticeable?) or to determine whether a batch of cider that took longer to ferment than usual is noticeably different from the brand standard.  Perhaps you want to be able to sell your product in both glass 750 mL bottles and 16-oz aluminum cans: will the same product taste different after a month stored in each of these containers?  **These goals can be addressed using discrimination testing.**
+
+Click the **next tab** to learn how to conduct a simple and flexible discrimination test--the "tetrad test".
+
+## Further Reading
+
+To learn more about sensory evaluation in general, we recommend the following resources (which are online or can be acquired affordably on the secondary market):
+
+- Lawless, H. T., & Heymann, H. (2010). *Sensory Evaluation of Food: Principles and Practices (Second)*. Springer.
+- Society of Sensory Professionals [Knowledge Center](https://www.sensorysociety.org/knowledge/Pages/default.aspx)
+
+:::
+
+
+# Recommended test procedure
+
+## Row {height=20%}
+
+::: {.card title="The 'tetrad' test"}
+
+So far, we've talked about what you can do with a general discrimination test.  In fact, there are many specific discrimination tests, all of which involve testing a similar, basic question:
+
+When samples are presented without identifying information, can panelists identify which sample or samples are different?
+
+Notice that we write "**panelists**" above: a key principle of sensory testing is that no one person, no matter how well-trained or expert, is accurate all the time or for every product.  Therefore, we use a group of subjects to conduct a sensory test, and we use statistics to determine the strength of the results we observed--to update our understanding of the differences (or not!) between the products.  This helps avoid drawing wrong conclusions just because someone had an off day or got very lucky.
+
+:::
+
+```{r}
+card(card_image("images/triangle-test-example.jpg"),
+     card_footer(
+       markdown("Presentation of samples for a water-quality *triangle* test.  This picture presents a key cautionary example: don't give your panelists extra clues about the different sample: here '183' is obviously different.")
+       ),
+     full_screen = TRUE
+     )
+```
+
+## Row {height=80%}
+
+::: {.card title="General procedure for conducting a discrimination test"}
+
+In general, a discrimination test requires the following:
+
+*  **Definition of the test objective**: what difference are you trying to quantify?  Ask yourself how sure you are that a difference between the samples will be found.  Examining our prior beliefs helps us calibrate the test.
+*  **Sample preparation**: anonymize samples and prepare to present them in a consistent fashion
+*  **Panelist recruitment**: typically we need at least 20 subjects to participate, and more than 40 is preferred.  In addition, it is usually a good idea to have panelists who do not all work in the winery or cidery--experience leads to expertise with the product.
+*  **The test(!)**: present the samples in the appropriate fashion (see below for a specific, recommended method), which will involve "anonymizing" samples (masking their identity in a way you can keep track of), and collecting responses in a "ballot".
+*  **Analyze the data**: use appropriate statistics (or a toolkit like this one!) to determine what the combination of your prior hypothesis and your observed data tells you about the actual range of possible difference between the two samples.
+*  **Make interpretations**: based on the observed results and subsequent statistical output (which typically gives a range of compatible true probabilities of discrimination), determine the risk of accepting that the samples are or are not different.
+
+## The "tetrad" test: Our recommended discrimination test
+
+There are many test procedures that follow the basic steps above, but rather than debate specific use cases or advantages, we are going to simply recommend that wineries and cideries use the **tetrad test** procedure.  [For reasons that are beyond the scope of this toolkit](https://www.sensorysociety.org/meetings/2016%20Presentations/W_SM_Kamerud.pdf), the tetrad test is more powerful than comparable tests, and has the advantage of being easy to set up and to present to panelists.  We think this makes it ideal for use in a winery or cidery environment
+
+The test is called the "tetrad" test specifically because it involves presenting each panelist with *four*, anonymized samples: two of sample A and two of sample B.  The panelist must then correctly group the two A and two B samples together.  
+
+## The specific procedure for the tetrad test {#specific-procedures}
+
+1.  Write down--before you start!--whether you expect the subjects to notice a difference or not, and how certain you are.  This can be subjective (in fact it has to be) but it is important to write this down before you gather results.  It tells you something about your impression of how big a change you're expecting to see, and will be used to calculate your results.  
+1.	Prepare worksheets/scoresheets before the test. The worksheets should ask assessors to group the four samples into two groups of two based on similarity.
+2.	Make sure each sample is served in the same amount (e.g., 20-30mL), in the same kind of container, and at the same temperature.  Each of the four samples should be labeled individually and anonymously, (e.g., with 3-digit codes, such as "123" for the first A, "334" for the second A, and so on).  Don't create differences between your samples unintentionally, [say by using two different colored markers for A and B samples.](#badexample)  
+3.  Present all 4 samples to a subject at the same time, in a randomized sequence.  That way, not all panelists will taste the first A first, which might bias the results.
+
+    Use an equal number of the six possible sequences of the two products (A and B): 
+
+    `AABB / ABAB / BBAA / BABA / ABBA / BAAB`
+
+    Distribute these at random among assessors to achieve a balanced serving order.
+    
+3.	Instruct assessors to taste the samples in the order presented.
+5.	In this test, assessors must make a choice. Answers such as “no difference” or “all samples are different” are not acceptable. Assessors who reported any of those answers should be instructed to group the samples into two pairs randomly. The assessors can write that the selection was only a guess in the comment section of the scoresheet (although this information will not be used further, it helps the assessors make their selection).
+5.  Compile the results into a single notebook/report.  The key elements to record are:
+    1.  The identity of the samples tested.
+    2.  The number of subjects who got it right: how many subjects got AA and BB together?
+    3.  The total number of subjects who participated.
+    4.  Your prior hypothesis, which you recorded before you started.
+    
+### A few other notes on the procedure:
+
+*  **Do not ask questions about preference/liking/how different the samples are** after the initial sample grouping.  These are different cognitive tasks than simply evaluating "is there a difference" and can bias the results.
+*  **Each scoresheet should be only for evaluating one group of samples** (testing 2 products only).  If you want to compare multiple sets of products, you need to use multiple sheets (and, in reality, set up multiple tests.)
+
+If you want to know more about the tetrad test, we recommend the following [technical presentation on tetrad testing](https://www.sensorysociety.org/meetings/2012%20Abstracts/SSP2012_Ennis_et_al_Tetrad_Workshop_2a.pdf).
+
+## Summary
+
+On this page, you learned how to set up and conduct a tetrad test.  The key element here is the [instructions for setting up and collecting the important data](#specific-procedures) you'll need for the next page: the number of subjects, the number of subjects *who got the right answer*, and your prior hypotheses.  
+
+Review this page and, when you're ready, conduct your test.  Then, go to the next page to analyze your results.
+
+:::
+
+# Data analysis
+
+::: {.card title="What you will need"}
+
+To use this part of the toolkit, you will need the results of your tetrad test.  Specifically, you will need:
+
+*  Your prior intuition for how easy it would be for panelists to tell the difference between the samples.  You wrote this down, right?
+*  The number of subjects who participated, which we can call $N$.  
+*  The number of subjects *who got the right answer*, which we can call $x$.  By necessity, $x≤N$. 
+
+Once you've got those, we're ready to get analyzing!
+
+## What you'll get from this data analysis
+
+Before we get to the analysis, a quick, intuitive explanation.  Above, we talked about two important numbers: $x$ and $N$.  In fact, the proportion of correct answers, $x/N$ is the key quantity we're interested in here.  Specifically, we're interested in what insight $x/N$ gives us into the plausible proportion of people noticing a difference in your two products, A and B, which we'll call $\pi$ ($\pi=p=$ proportion).  Because $\pi$ is a proportion $0≤\pi≤1$, but we will present results in terms of both $\pi$ and in terms of the number of people in 100 who would notice a difference.
+
+Intuitively, if $\pi$ is closer to $1$, then most people will notice a difference.  If $\pi$ is closer to $0$, then very few people will.  Behind the scenes, we're using $x/N$, combined with your prior estimate of how likely you think there is to be a *sensory* difference between A and B, to calculate a plausible range of $\pi$ values that could lead to that $x/N$.
+
+By giving some worst- and best-case outcomes, we'll tell you what you should expect to see, based on your prior intuition and your actual data, if you brought your products to market.
+
+:::
+
+
+# Let's try it out
+
+## {.sidebar}
+Select the total number of participants and and the number of participants who thought there was a difference between the samples.
+
+```{r}
+numericInput(
+  "N", label = "Number of participants",
+  value = 0, min = 0)
+
+numericInput(
+  "X", label = "Number of participants who thought they were different",
+  value = 0, min = 0)
+
+selectInput("prior", "Your expectation:",
+            choices = prior_tbl$certainty)
+
+actionButton("simulate", "Run")
+```
+
+## Column {.tabset}
+
+```{r}
+#| title: Visualize the outcomce
+textOutput("reportText")
+plotOutput("reportPlot")
+```
+
+```{r}
+#| title: Distribution for priors
+plotOutput("bayesPlot")
+```
+
+
+```{r}
+#| context: server
+  
+priors <- reactive(prior_ab(prior_tbl, input$prior))
+
+N <- eventReactive(input$simulate, input$N)
+X <- eventReactive(input$simulate, input$X)
+
+output$ab <- renderText(
+    paste("Alpha is currently:", priors()[[1]], "and",
+          "Beta is currently:", priors()[[2]]))
+
+output$bayesPlot <- renderPlot({
+    bayesrules::plot_beta_binomial(alpha = priors()[[1]], beta = priors()[[2]], y = X(), n = N()) + theme_linedraw()
+  })
+
+output$reportText <- renderText(
+    report_txt(N(), X())
+  )
+  
+output$reportPlot <- renderPlot({
+    report_plt(N(), X())
+  })
+```
+
