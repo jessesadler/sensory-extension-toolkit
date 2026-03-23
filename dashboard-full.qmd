@@ -37,24 +37,30 @@ prior_ab <- function(prior_tbl, level) {
   out
 }
 
-lims_fun <- function(N, X) {
-  qbeta(p = c(0.05, 0.95), shape1 = 6 + X, shape2 = 6 + N - X)
+lims_fun <- function(N, X, a, b) {
+  qbeta(p = c(0.05, 0.95), shape1 = a + X, shape2 = b + N - X)
 }
 
-report_txt <- function(N, X, confidence = 0.9) {
-  lims <- lims_fun(N, X)
+mode_fun <- function(N, X, a, b){
+  (a + X - 1) / (a + b + N - 2)
+}
+
+report_txt <- function(N, X, a, b, confidence = 0.9) {
+  lims <- lims_fun(N, X, a, b)
+  mode <- mode_fun(N, X, a, b)
   glue(
     "Based on your prior certainty about how different your samples were, ", 
     "and the fact that {X}/{N} of your tasters correctly completed the ",
-    "discrimination test, we estimate that in approximately ", 
-    "{round(confidence * 100, 0)}% of cases, a minimum of ", 
-    "{round(100*lims[1], 0)}% and a maximum of {round(100*lims[2], 0)}% ",
-    "of consumers would notice the difference between these two sample wines."
+    "discrimination test, we estimate with {round(confidence * 100, 0)}%  confidence that the probability ",  
+    "of there being a noticeable sensory difference in these two samples is ", "between a minimum of {round(100*lims[1], 0)}% and a maximum of {round(100*lims[2], 0)}%, ",
+    "with the most likely probability being {round(100*mode, 0)}% of subjects noticing a difference. ",
+    "These probabilities are displayed below applied to a theoretical 100 tasters, ",
+    "to help illustrate the possible outcomes in real-world circumstances."
   )
 }
 
-report_plt <- function(N, X, confidence = 0.9) {
-  lims <- lims_fun(N, X)
+report_plt <- function(N, X, a, b, confidence = 0.9) {
+  lims <- lims_fun(N, X, a, b)
   
   data.frame(
     difference = c(rep("Noticed", 3), rep("Did not notice", 3)),
@@ -299,11 +305,11 @@ output$bayesPlot <- renderPlot({
   })
 
 output$reportText <- renderText(
-    report_txt(N(), X())
+    report_txt(N(), X(), priors()[[1]], priors()[[2]])
   )
   
 output$reportPlot <- renderPlot({
-    report_plt(N(), X())
+    report_plt(N(), X(), priors()[[1]], priors()[[2]])
   })
 ```
 
